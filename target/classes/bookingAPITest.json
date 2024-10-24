@@ -1,0 +1,13 @@
+{
+  "tests": [
+    {
+      "method": "GET",
+      "description": "Get booking IDs",
+      "params": {
+        "baseUrl": "https://restful-booker.herokuapp.com",
+        "endpoint": "/booking",
+        "expected_status": 201
+      }
+    }
+  ]
+}
