@@ -10,11 +10,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
@@ -25,6 +26,8 @@ public class APITest {
     // Declare ExtentReports and ExtentTest
     private static ExtentReports extent = new ExtentReports();
     private static ExtentTest test;
+    private static Map<String, String> staticVariablesMap;  // To hold static variable values
+    private static Map<String, String> dynamicVariablesMap = new HashMap<>(); // To hold dynamic variable values
 
     static {
         // Initialize ExtentSparkReporter to generate HTML report
@@ -43,21 +46,32 @@ public class APITest {
 
         Response response;
 
+        // Replace any static variables in the request body or endpoint
+        JsonNode updatedParams = replaceStaticVariables(params);
+
         // Set base URL for RestAssured
-        RestAssured.baseURI = params.get("baseUrl").asText();
-        String endpoint = params.get("endpoint").asText();
+        RestAssured.baseURI = updatedParams.get("baseUrl").asText();
+        String endpoint = updatedParams.get("endpoint").asText();
 
         // Prepare the request
-        var request = given().contentType(params.has("headers") ? params.get("headers").get("Content-Type").asText() : "application/json");
+        var request = given().contentType(updatedParams.has("headers") ? updatedParams.get("headers").get("Content-Type").asText() : "application/json");
 
         switch (method.toUpperCase()) {
             case "POST":
-                response = request.body(params.get("request_body").toString()) // Convert JsonNode to String
+                response = request.body(updatedParams.get("request_body").toString()) // Convert JsonNode to String
                         .when()
                         .post(endpoint);
+
+                // Save dynamic variables from the response if "save_response" is specified
+                String saveResponseField = updatedParams.has("save_response") ? updatedParams.get("save_response").asText() : null;
+                if (saveResponseField != null) {
+                    saveDynamicVariable(response, saveResponseField);
+                }
                 break;
 
             case "GET":
+                // Replace any dynamic variables in the endpoint before making the request
+                endpoint = replaceDynamicVariables(endpoint);
                 response = request.when().get(endpoint);
                 break;
 
@@ -71,58 +85,107 @@ public class APITest {
 
         // Validate the response status code and catch the failure if any
         try {
-            assertEquals(params.get("expected_status").asInt(), response.getStatusCode(),
-                    "Expected status code " + params.get("expected_status").asInt() + " but got " + response.getStatusCode());
-            test.pass("Status Code Validation Passed: " + params.get("expected_status").asInt());
+            assertEquals(updatedParams.get("expected_status").asInt(), response.getStatusCode(),
+                    "Expected status code " + updatedParams.get("expected_status").asInt() + " but got " + response.getStatusCode());
+            test.pass("Status Code Validation Passed: " + updatedParams.get("expected_status").asInt());
         } catch (AssertionError e) {
-            // Log the failure in the Extent report and mark the test as failed
-            test.fail("Status Code Validation Failed: Expected " + params.get("expected_status").asInt() + " but got " + response.getStatusCode());
+            test.fail("Status Code Validation Failed: Expected " + updatedParams.get("expected_status").asInt() + " but got " + response.getStatusCode());
             throw e;  // Re-throw the exception to ensure JUnit also fails the test
         }
 
         // Validate response body fields
-        if (params.has("expected_response_body")) {
-            for (Iterator<String> it = params.get("expected_response_body").fieldNames(); it.hasNext(); ) {
-                String key = it.next();
-                JsonNode expectedValueNode = params.get("expected_response_body").get(key);
+        if (updatedParams.has("expected_response_body")) {
+            JsonNode expectedResponseBody = updatedParams.get("expected_response_body");
 
-                if (expectedValueNode != null) {
-                    // Call the method to assert JSON field values
-                    assertJsonField(expectedValueNode, response, key);
-                } else {
-                    test.fail("Expected value for key '" + key + "' is null.");
-                }
+            // Parse the actual response body as a JsonNode
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode actualResponseBody;
+            try {
+                actualResponseBody = objectMapper.readTree(response.asString());
+            } catch (IOException e) {
+                test.fail("Failed to parse response body as JSON.");
+                throw new RuntimeException(e); // Stop further execution
             }
-        }
 
-        // Log the response for the current test case
-        test.info("Response for " + description + ": " + response.asString());
+            // Compare expected and actual response bodies
+            compareJsonFields(expectedResponseBody, actualResponseBody, "");
+        }
     }
 
-    // Method to assert JSON field values and log results
-    private void assertJsonField(JsonNode expectedValueNode, Response response, String jsonPath) {
-        // Get the expected value and determine its type
-        Object expectedValue = expectedValueNode.isNumber() ? expectedValueNode.asInt() : expectedValueNode.asText();
+    // Replace static variables in JSON with actual values
+    private JsonNode replaceStaticVariables(JsonNode params) {
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonStr = params.toString();
 
-        // Get the actual value from the response
-        Object actualValue = expectedValueNode.isNumber()
-                ? response.jsonPath().getInt(jsonPath) // If expecting a number
-                : response.jsonPath().getString(jsonPath); // If expecting a string
-
-        // Handle type conversion for comparison
-        if (expectedValue instanceof Number && actualValue instanceof String) {
-            actualValue = Integer.parseInt((String) actualValue);
-        } else if (expectedValue instanceof String && actualValue instanceof Number) {
-            actualValue = actualValue.toString();
+        // Iterate over static variables and replace placeholders in the JSON string
+        for (Map.Entry<String, String> entry : staticVariablesMap.entrySet()) {
+            String placeholder = "${" + entry.getKey() + "}";
+            jsonStr = jsonStr.replace(placeholder, entry.getValue());
         }
 
-        // Perform the assertion and log results
+        // Convert the updated string back to a JsonNode
         try {
-            assertEquals(expectedValue, actualValue, "Mismatch for JSON path: " + jsonPath);
-            test.pass("Field validation passed for: " + jsonPath);
-        } catch (AssertionError e) {
-            test.fail("Field validation failed for: " + jsonPath + " - Expected: " + expectedValue + ", Actual: " + actualValue);
-            throw e;  // Ensure JUnit fails as well
+            return mapper.readTree(jsonStr);
+        } catch (IOException e) {
+            throw new RuntimeException("Error while replacing static variables in JSON", e);
+        }
+    }
+
+    // Replace dynamic variables in the endpoint or request body
+    private String replaceDynamicVariables(String input) {
+        for (Map.Entry<String, String> entry : dynamicVariablesMap.entrySet()) {
+            String placeholder = "{{" + entry.getKey() + "}}";
+            input = input.replace(placeholder, entry.getValue());
+        }
+        return input;
+    }
+
+    // Save dynamic variables from the API response
+    private void saveDynamicVariable(Response response, String fieldName) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonResponse;
+        try {
+            jsonResponse = objectMapper.readTree(response.asString());
+
+            // Check if the response has the field to save
+            if (jsonResponse.has(fieldName)) {
+                dynamicVariablesMap.put(fieldName, jsonResponse.get(fieldName).asText());
+                test.info("Saved dynamic variable: " + fieldName + " = " + jsonResponse.get(fieldName).asText());
+            } else {
+                test.warning("Field " + fieldName + " not found in the response.");
+            }
+        } catch (IOException e) {
+            test.fail("Failed to parse response body to save dynamic variable.");
+            throw new RuntimeException(e); // Stop further execution
+        }
+    }
+
+    // Method to compare expected and actual JSON fields recursively and log results
+    private void compareJsonFields(JsonNode expectedNode, JsonNode actualNode, String jsonPath) {
+        if (expectedNode.isObject()) {
+            // For each field in the expected JSON
+            expectedNode.fieldNames().forEachRemaining(fieldName -> {
+                String currentPath = jsonPath.isEmpty() ? fieldName : jsonPath + "." + fieldName;
+                JsonNode expectedValue = expectedNode.get(fieldName);
+                JsonNode actualValue = actualNode.get(fieldName);
+
+                // If the field is missing in the actual response
+                if (actualValue == null) {
+                    test.fail("Missing field in response: " + currentPath);
+                } else {
+                    // Recursively check nested objects
+                    compareJsonFields(expectedValue, actualValue, currentPath);
+                }
+            });
+        } else {
+            // Compare actual and expected values
+            try {
+                assertEquals(expectedNode.asText(), actualNode.asText(), "Mismatch for field: " + jsonPath);
+                test.pass("Field validation passed for: " + jsonPath);
+            } catch (AssertionError e) {
+                test.fail("Field validation failed for: " + jsonPath + " - Expected: " + expectedNode.asText() + ", Actual: " + actualNode.asText());
+                throw e;
+            }
         }
     }
 
@@ -130,6 +193,9 @@ public class APITest {
     public static Object[][] data() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode testCases = mapper.readTree(new File("src/main/resources/bookingAPITest.json"));
+
+        // Load static variables
+        staticVariablesMap = mapper.convertValue(testCases.get("variables"), Map.class);
 
         // Create an array to hold the test data
         Object[][] testData = new Object[testCases.get("tests").size()][3];
@@ -144,10 +210,9 @@ public class APITest {
         return testData;
     }
 
-    // Add @AfterAll method to ensure report is generated
     @AfterAll
     public static void tearDown() {
-        // Flush the report at the end of all tests
+        // Flush the ExtentReports at the end
         extent.flush();
     }
 }

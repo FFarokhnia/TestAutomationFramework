@@ -1,4 +1,8 @@
 {
+  "variables": {
+    "firstname": "mahsa",
+    "lastname": "Farokhnia"
+  },
   "tests": [
     {
       "method": "GET",
@@ -6,8 +10,66 @@
       "params": {
         "baseUrl": "https://restful-booker.herokuapp.com",
         "endpoint": "/booking",
-        "expected_status": 201
+        "expected_status": 200
+      }
+    },
+    {
+      "method": "POST",
+      "description": "Create Booking",
+      "params": {
+        "baseUrl": "https://restful-booker.herokuapp.com",
+        "endpoint": "/booking",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "request_body": {
+          "firstname": "${firstname}",
+          "lastname": "${lastname}",
+          "totalprice": 1000,
+          "depositpaid": true,
+          "bookingdates": {
+            "checkin": "2018-01-01",
+            "checkout": "2019-01-01"
+          },
+          "additionalneeds": "super bowls"
+        },
+        "expected_status": 200,
+        "expected_response_body": {
+          "booking": {
+            "firstname": "${firstname}",
+            "lastname": "${lastname}",
+            "totalprice": 1000,
+            "depositpaid": true,
+            "bookingdates": {
+              "checkin": "2018-01-01",
+              "checkout": "2019-01-01"
+            },
+            "additionalneeds": "super bowls"
+          }
+        },
+        "save_response": "bookingid"
+      }
+    },
+    {
+      "method": "GET",
+      "description": "Get booking by ID",
+      "params": {
+        "baseUrl": "https://restful-booker.herokuapp.com",
+        "endpoint": "/booking/{{bookingid}}",
+        "expected_status": 200,
+        "expected_response_body": {
+            "firstname": "${firstname}",
+            "lastname": "${lastname}",
+            "totalprice": 1000,
+            "depositpaid": true,
+            "bookingdates": {
+              "checkin": "2018-01-01",
+              "checkout": "2019-01-01"
+            },
+            "additionalneeds": "super bowls"
+          }
       }
     }
   ]
 }
+
