@@ -1,14 +1,17 @@
 {
   "variables": {
-    "firstname": "mahsa",
-    "lastname": "Farokhnia"
+    "firstname": "Pezhvak",
+    "lastname": "Varseh",
+    "BookingBaseUrl": "https://restful-booker.herokuapp.com",
+    "username": "admin",
+    "password": "password123"
   },
   "tests": [
     {
       "method": "GET",
       "description": "Get booking IDs",
       "params": {
-        "baseUrl": "https://restful-booker.herokuapp.com",
+        "baseUrl": "${BookingBaseUrl}",
         "endpoint": "/booking",
         "expected_status": 200
       }
@@ -17,7 +20,7 @@
       "method": "POST",
       "description": "Create Booking",
       "params": {
-        "baseUrl": "https://restful-booker.herokuapp.com",
+        "baseUrl": "${BookingBaseUrl}",
         "endpoint": "/booking",
         "headers": {
           "Content-Type": "application/json"
@@ -54,22 +57,115 @@
       "method": "GET",
       "description": "Get booking by ID",
       "params": {
-        "baseUrl": "https://restful-booker.herokuapp.com",
+        "baseUrl": "${BookingBaseUrl}",
         "endpoint": "/booking/{{bookingid}}",
         "expected_status": 200,
         "expected_response_body": {
-            "firstname": "${firstname}",
-            "lastname": "${lastname}",
-            "totalprice": 1000,
-            "depositpaid": true,
-            "bookingdates": {
-              "checkin": "2018-01-01",
-              "checkout": "2019-01-01"
-            },
-            "additionalneeds": "super bowls"
-          }
+          "firstname": "${firstname}",
+          "lastname": "${lastname}",
+          "totalprice": 1000,
+          "depositpaid": true,
+          "bookingdates": {
+            "checkin": "2018-01-01",
+            "checkout": "2019-01-01"
+          },
+          "additionalneeds": "super bowls"
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "description": "Token Generator",
+      "params": {
+        "baseUrl": "${BookingBaseUrl}",
+        "endpoint": "/auth",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "request_body": {
+          "username" : "${username}",
+          "password" : "${password}"
+        },
+        "expected_status": 200,
+        "save_response": "token"
+      }
+    },
+    {
+      "method": "PUT",
+      "description": "Update booking ID",
+      "params": {
+        "baseUrl": "${BookingBaseUrl}",
+        "endpoint": "/booking/{{bookingid}}",
+        "headers": {
+          "Content-Type": "application/json",
+          "Cookie": "token={{token}}"
+        },
+        "request_body": {
+          "firstname": "Mahsa",
+          "lastname": "Farokhnia",
+          "totalprice": 222,
+          "depositpaid": false,
+          "bookingdates": {
+            "checkin": "2023-01-01",
+            "checkout": "2024-01-01"
+          },
+          "additionalneeds": "Lunch"
+        },
+        "expected_status": 200,
+        "expected_response_body": {
+          "firstname": "Mahsa",
+          "lastname": "Farokhnia",
+          "totalprice": 222,
+          "depositpaid": false,
+          "bookingdates": {
+            "checkin": "2023-01-01",
+            "checkout": "2024-01-01"
+          },
+          "additionalneeds": "Lunch"
+        }
       }
     }
+  ,
+    {
+      "method": "PATCH",
+      "description": "Partial Update Booking ID",
+      "params": {
+        "baseUrl": "${BookingBaseUrl}",
+        "endpoint": "/booking/{{bookingid}}",
+        "headers": {
+          "Content-Type": "application/json",
+          "Cookie": "token={{token}}"
+        },
+        "request_body":{
+          "firstname" : "Homa",
+          "lastname" : "Aghababa"
+        },
+        "expected_status": 200,
+        "expected_response_body": {
+          "firstname" : "Homa",
+          "lastname" : "Aghababa",
+          "totalprice": 222,
+          "depositpaid": false,
+          "bookingdates": {
+            "checkin": "2023-01-01",
+            "checkout": "2024-01-01"
+          },
+          "additionalneeds": "Lunch"
+        }
+      }
+    },
+    {
+      "method": "DELETE",
+      "description": "Delete Booking ID",
+      "params": {
+        "baseUrl": "${BookingBaseUrl}",
+        "endpoint": "/booking/{{bookingid}}",
+        "headers": {
+          "Cookie": "token={{token}}"
+        },
+        "expected_status": 201
+      }
+    }
+
   ]
 }
-

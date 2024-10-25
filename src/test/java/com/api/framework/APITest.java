@@ -51,10 +51,13 @@ public class APITest {
 
         // Set base URL for RestAssured
         RestAssured.baseURI = updatedParams.get("baseUrl").asText();
-        String endpoint = updatedParams.get("endpoint").asText();
-
+        String endpoint = replaceDynamicVariables(updatedParams.get("endpoint").asText());
+        String saveResponseField;
         // Prepare the request
-        var request = given().contentType(updatedParams.has("headers") ? updatedParams.get("headers").get("Content-Type").asText() : "application/json");
+        var request = given().contentType(updatedParams.has("headers") && updatedParams.get("headers").has("Content-Type") ? updatedParams.get("headers").get("Content-Type").asText() : "application/json");
+        if (updatedParams.has("headers") && updatedParams.get("headers").has("Cookie"))
+             request = request.header("Cookie", replaceDynamicVariables(updatedParams.get("headers").get("Cookie").asText()));
+
 
         switch (method.toUpperCase()) {
             case "POST":
@@ -63,18 +66,41 @@ public class APITest {
                         .post(endpoint);
 
                 // Save dynamic variables from the response if "save_response" is specified
-                String saveResponseField = updatedParams.has("save_response") ? updatedParams.get("save_response").asText() : null;
+                saveResponseField = updatedParams.has("save_response") ? updatedParams.get("save_response").asText() : null;
                 if (saveResponseField != null) {
                     saveDynamicVariable(response, saveResponseField);
                 }
                 break;
 
             case "GET":
-                // Replace any dynamic variables in the endpoint before making the request
-                endpoint = replaceDynamicVariables(endpoint);
                 response = request.when().get(endpoint);
                 break;
 
+            case "PUT":
+               response = request.body(updatedParams.get("request_body").toString()) // Convert JsonNode to String
+                        .when()
+                        .put(endpoint);
+
+                // Save dynamic variables from the response if "save_response" is specified
+                saveResponseField = updatedParams.has("save_response") ? updatedParams.get("save_response").asText() : null;
+                if (saveResponseField != null) {
+                    saveDynamicVariable(response, saveResponseField);
+                }
+                break;
+            case "PATCH":
+                response = request.body(updatedParams.get("request_body").toString()) // Convert JsonNode to String
+                        .when()
+                        .patch(endpoint);
+
+                // Save dynamic variables from the response if "save_response" is specified
+                saveResponseField = updatedParams.has("save_response") ? updatedParams.get("save_response").asText() : null;
+                if (saveResponseField != null) {
+                    saveDynamicVariable(response, saveResponseField);
+                }
+                break;
+            case "DELETE":
+                response = request.when().delete(endpoint);
+                break;
             default:
                 throw new UnsupportedOperationException("HTTP method not supported: " + method);
         }
