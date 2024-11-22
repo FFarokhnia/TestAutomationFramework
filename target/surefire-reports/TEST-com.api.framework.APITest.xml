@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.api.framework.APITest" time="6.769" tests="7" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.api.framework.APITest" time="10.849" tests="13" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="IR"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/farokhnia/testAutomationFramework/target/surefire/surefirebooter6763729244812475482.jar /Users/farokhnia/testAutomationFramework/target/surefire 2024-10-26T10-28-53_760-jvmRun1 surefire17718717450865585461tmp surefire_05563592277288283310tmp"/>
+    <property name="sun.java.command" value="/Users/farokhnia/testAutomationFramework/target/surefire/surefirebooter9034443738813869537.jar /Users/farokhnia/testAutomationFramework/target/surefire 2024-11-22T18-32-54_293-jvmRun1 surefire14098574750767295663tmp surefire_011058846315131136340tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/Users/farokhnia/testAutomationFramework/target/test-classes:/Users/farokhnia/testAutomationFramework/target/classes:/Users/farokhnia/.m2/repository/org/projectlombok/lombok/1.18.28/lombok-1.18.28.jar:/Users/farokhnia/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.18.0/jackson-databind-2.18.0.jar:/Users/farokhnia/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.18.0/jackson-annotations-2.18.0.jar:/Users/farokhnia/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.18.0/jackson-core-2.18.0.jar:/Users/farokhnia/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar:/Users/farokhnia/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/farokhnia/.m2/repository/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2.jar:/Users/farokhnia/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/farokhnia/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar:/Users/farokhnia/.m2/repository/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2.jar:/Users/farokhnia/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2.jar:/Users/farokhnia/.m2/repository/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar:/Users/farokhnia/.m2/repository/io/rest-assured/rest-assured/5.3.0/rest-assured-5.3.0.jar:/Users/farokhnia/.m2/repository/org/apache/groovy/groovy/4.0.6/groovy-4.0.6.jar:/Users/farokhnia/.m2/repository/org/apache/groovy/groovy-xml/4.0.6/groovy-xml-4.0.6.jar:/Users/farokhnia/.m2/repository/org/apache/httpcomponents/httpclient/4.5.13/httpclient-4.5.13.jar:/Users/farokhnia/.m2/repository/org/apache/httpcomponents/httpcore/4.4.13/httpcore-4.4.13.jar:/Users/farokhnia/.m2/repository/commons-logging/commons-logging/1.2/commons-logging-1.2.jar:/Users/farokhnia/.m2/repository/commons-codec/commons-codec/1.11/commons-codec-1.11.jar:/Users/farokhnia/.m2/repository/org/apache/httpcomponents/httpmime/4.5.13/httpmime-4.5.13.jar:/Users/farokhnia/.m2/repository/org/hamcrest/hamcrest/2.1/hamcrest-2.1.jar:/Users/farokhnia/.m2/repository/org/ccil/cowan/tagsoup/tagsoup/1.2.1/tagsoup-1.2.1.jar:/Users/farokhnia/.m2/repository/io/rest-assured/xml-path/5.3.0/xml-path-5.3.0.jar:/Users/farokhnia/.m2/repository/io/rest-assured/json-path/5.3.0/json-path-5.3.0.jar:/Users/farokhnia/.m2/repository/org/apache/groovy/groovy-json/4.0.6/groovy-json-4.0.6.jar:/Users/farokhnia/.m2/repository/io/rest-assured/rest-assured-common/5.3.0/rest-assured-common-5.3.0.jar:/Users/farokhnia/.m2/repository/com/aventstack/extentreports/5.0.9/extentreports-5.0.9.jar:/Users/farokhnia/.m2/repository/io/reactivex/rxjava3/rxjava/3.0.4/rxjava-3.0.4.jar:/Users/farokhnia/.m2/repository/org/reactivestreams/reactive-streams/1.0.3/reactive-streams-1.0.3.jar:/Users/farokhnia/.m2/repository/org/freemarker/freemarker/2.3.30/freemarker-2.3.30.jar:/Users/farokhnia/.m2/repository/com/google/code/gson/gson/2.8.6/gson-2.8.6.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -27,7 +27,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="/Users/farokhnia/testAutomationFramework/target/surefire/surefirebooter6763729244812475482.jar"/>
+    <property name="surefire.real.class.path" value="/Users/farokhnia/testAutomationFramework/target/surefire/surefirebooter9034443738813869537.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="17.0.10+11-LTS-240"/>
     <property name="user.name" value="farokhnia"/>
@@ -51,11 +51,17 @@
     <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="executeApiTest{String, String, JsonNode}[1]" classname="com.api.framework.APITest" time="3.923"/>
-  <testcase name="executeApiTest{String, String, JsonNode}[2]" classname="com.api.framework.APITest" time="0.202"/>
-  <testcase name="executeApiTest{String, String, JsonNode}[3]" classname="com.api.framework.APITest" time="0.191"/>
-  <testcase name="executeApiTest{String, String, JsonNode}[4]" classname="com.api.framework.APITest" time="0.169"/>
-  <testcase name="executeApiTest{String, String, JsonNode}[5]" classname="com.api.framework.APITest" time="0.174"/>
-  <testcase name="executeApiTest{String, String, JsonNode}[6]" classname="com.api.framework.APITest" time="0.168"/>
-  <testcase name="executeApiTest{String, String, JsonNode}[7]" classname="com.api.framework.APITest" time="0.167"/>
+  <testcase name="executeApiTest{String, String, String, JsonNode}[1]" classname="com.api.framework.APITest" time="2.967"/>
+  <testcase name="executeApiTest{String, String, String, JsonNode}[2]" classname="com.api.framework.APITest" time="0.279"/>
+  <testcase name="executeApiTest{String, String, String, JsonNode}[3]" classname="com.api.framework.APITest" time="0.302"/>
+  <testcase name="executeApiTest{String, String, String, JsonNode}[4]" classname="com.api.framework.APITest" time="0.258"/>
+  <testcase name="executeApiTest{String, String, String, JsonNode}[5]" classname="com.api.framework.APITest" time="0.239"/>
+  <testcase name="executeApiTest{String, String, String, JsonNode}[6]" classname="com.api.framework.APITest" time="0.257"/>
+  <testcase name="executeApiTest{String, String, String, JsonNode}[7]" classname="com.api.framework.APITest" time="0.826"/>
+  <testcase name="executeApiTest{String, String, String, JsonNode}[8]" classname="com.api.framework.APITest" time="0.448"/>
+  <testcase name="executeApiTest{String, String, String, JsonNode}[9]" classname="com.api.framework.APITest" time="0.257"/>
+  <testcase name="executeApiTest{String, String, String, JsonNode}[10]" classname="com.api.framework.APITest" time="0.249"/>
+  <testcase name="executeApiTest{String, String, String, JsonNode}[11]" classname="com.api.framework.APITest" time="0.229"/>
+  <testcase name="executeApiTest{String, String, String, JsonNode}[12]" classname="com.api.framework.APITest" time="0.233"/>
+  <testcase name="executeApiTest{String, String, String, JsonNode}[13]" classname="com.api.framework.APITest" time="0.242"/>
 </testsuite>

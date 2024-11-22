@@ -4,18 +4,27 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import io.restassured.config.SSLConfig;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
@@ -35,11 +44,18 @@ public class APITest {
         extent.attachReporter(spark);
     }
 
+
+
+    static {
+        RestAssured.config = RestAssured.config()
+                .sslConfig(SSLConfig.sslConfig().relaxedHTTPSValidation());
+    }
+
     @ParameterizedTest(name = "{index}: {1}")
     @MethodSource("data")
-    public void executeApiTest(String method, String description, JsonNode params) {
+    public void executeApiTest(String testCaseID, String method, String description, JsonNode params) {
         // Create a test in the report
-        test = extent.createTest(description);
+        test = extent.createTest(testCaseID+"---"+description);
 
         // Log the details of the test
         test.info("Executing API Test: " + description);
@@ -51,13 +67,19 @@ public class APITest {
 
         // Set base URL for RestAssured
         RestAssured.baseURI = updatedParams.get("baseUrl").asText();
+
         String endpoint = replaceDynamicVariables(updatedParams.get("endpoint").asText());
         String saveResponseField;
         // Prepare the request
         var request = given().contentType(updatedParams.has("headers") && updatedParams.get("headers").has("Content-Type") ? updatedParams.get("headers").get("Content-Type").asText() : "application/json");
         if (updatedParams.has("headers") && updatedParams.get("headers").has("Cookie"))
              request = request.header("Cookie", replaceDynamicVariables(updatedParams.get("headers").get("Cookie").asText()));
-
+        if (updatedParams.has("headers") && updatedParams.get("headers").has("Authorization"))
+            request = request.header("Authorization", replaceDynamicVariables(updatedParams.get("headers").get("Authorization").asText()));
+        if (updatedParams.has("queryParams")) {
+            JsonNode queryParams = updatedParams.get("queryParams");
+            addQueryParamsToRequest(request,queryParams);
+        }
 
         switch (method.toUpperCase()) {
             case "POST":
@@ -138,6 +160,8 @@ public class APITest {
         }
     }
 
+
+
     // Replace static variables in JSON with actual values
     private JsonNode replaceStaticVariables(JsonNode params) {
         ObjectMapper mapper = new ObjectMapper();
@@ -148,6 +172,9 @@ public class APITest {
             String placeholder = "${" + entry.getKey() + "}";
             jsonStr = jsonStr.replace(placeholder, entry.getValue());
         }
+        // Replace the date placeholder with the current date
+        String currentUTCDate = getCurrentUTCDate();
+        jsonStr = jsonStr.replace("{{date_UTC}}", currentUTCDate);
 
         // Convert the updated string back to a JsonNode
         try {
@@ -186,7 +213,19 @@ public class APITest {
         }
     }
 
-    // Method to compare expected and actual JSON fields recursively and log results
+    private void addQueryParamsToRequest(RequestSpecification request, JsonNode queryParams) {
+        if (queryParams.isObject()) {
+            queryParams.fieldNames().forEachRemaining(fieldName -> {
+                String value = queryParams.get(fieldName).asText();
+                request.queryParam(fieldName, value);
+            });
+        } else {
+            throw new IllegalArgumentException("Query parameters JSON must be an object");
+        }
+
+    }
+
+// Method to compare JSON fields recursively and validate response fields
     private void compareJsonFields(JsonNode expectedNode, JsonNode actualNode, String jsonPath) {
         if (expectedNode.isObject()) {
             // For each field in the expected JSON
@@ -195,46 +234,93 @@ public class APITest {
                 JsonNode expectedValue = expectedNode.get(fieldName);
                 JsonNode actualValue = actualNode.get(fieldName);
 
-                // If the field is missing in the actual response
-                if (actualValue == null) {
+                // If the field is missing or unexpected in the actual response
+                if (actualValue == null && expectedValue != null) {
                     test.fail("Missing field in response: " + currentPath);
-                } else {
-                    // Recursively check nested objects
+                } else if (expectedValue == null && actualValue != null) {
+                    test.fail("Unexpected field in response: " + currentPath);
+                } else if (expectedValue != null) {
+                    // Recursively check nested objects or compare scalar values
                     compareJsonFields(expectedValue, actualValue, currentPath);
                 }
             });
         } else {
-            // Compare actual and expected values
-            try {
-                assertEquals(expectedNode.asText(), actualNode.asText(), "Mismatch for field: " + jsonPath);
-                test.pass("Field validation passed for: " + jsonPath);
-            } catch (AssertionError e) {
-                test.fail("Field validation failed for: " + jsonPath + " - Expected: " + expectedNode.asText() + ", Actual: " + actualNode.asText());
-                throw e;
+            // Handle nulls for scalar values
+            if (expectedNode.isNull() && actualNode.isNull()) {
+                test.pass("Field validation passed for: " + jsonPath + " (both are null)");
+                return;
+            } else if (expectedNode.isNull() || actualNode.isNull()) {
+                test.fail("Field validation failed for: " + jsonPath + " - Expected: " + expectedNode + ", Actual: " + actualNode);
+                return;
+            }
+
+            // Special handling for "dateUpdated" field
+            if (jsonPath.endsWith("dateUpdated")) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                try {
+                    LocalDateTime expectedDate = LocalDateTime.parse(expectedNode.asText(), formatter);
+                    LocalDateTime actualDate = LocalDateTime.parse(actualNode.asText(), formatter);
+
+                    long differenceInSeconds = Math.abs(Duration.between(expectedDate, actualDate).getSeconds());
+                    int allowedDifference = 5; // Allow up to 5 seconds of difference
+                    Assertions.assertTrue(differenceInSeconds <= allowedDifference,
+                            "Mismatch for field: " + jsonPath + " - Difference in seconds: " + differenceInSeconds);
+                    test.pass("Field validation passed for: " + jsonPath);
+                } catch (Exception e) {
+                    test.fail("Date parsing failed for field: " + jsonPath + " - Expected: " + expectedNode.asText() + ", Actual: " + actualNode.asText());
+                    throw e;
+                }
+            } else {
+                // Compare actual and expected scalar values
+                try {
+                    assertEquals(expectedNode.asText(), actualNode.asText(), "Mismatch for field: " + jsonPath);
+                    test.pass("Field validation passed for: " + jsonPath);
+                } catch (AssertionError e) {
+                    test.fail("Field validation failed for: " + jsonPath + " - Expected: " + expectedNode.asText() + ", Actual: " + actualNode.asText());
+                    throw e;
+                }
             }
         }
     }
 
+
     // Method to load test data from JSON file
     public static Object[][] data() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode testCases = mapper.readTree(new File("src/main/resources/bookingAPITest.json"));
+        JsonNode testCases = mapper.readTree(new File("src/main/resources/SMSCenterAPI.json"));
 
         // Load static variables
         staticVariablesMap = mapper.convertValue(testCases.get("variables"), Map.class);
 
         // Create an array to hold the test data
-        Object[][] testData = new Object[testCases.get("tests").size()][3];
+        Object[][] testData = new Object[testCases.get("tests").size()][4];
 
         for (int i = 0; i < testCases.get("tests").size(); i++) {
             JsonNode testCase = testCases.get("tests").get(i);
-            testData[i][0] = testCase.get("method").asText();
-            testData[i][1] = testCase.get("description").asText();
-            testData[i][2] = testCase.get("params");
+            testData[i][0] = testCase.get("testCaseID").asText();
+            testData[i][1] = testCase.get("method").asText();
+            testData[i][2] = testCase.get("description").asText();
+            testData[i][3] = testCase.get("params");
         }
 
         return testData;
     }
+
+    // Method to get the current date in the required format
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+
+    public static String getCurrentUTCDate() {
+        ZonedDateTime nowUtc = ZonedDateTime.now(ZoneId.of("UTC"));
+        return nowUtc.format(FORMATTER);
+
+    }
+
+    public static String getCurrentDate() {
+        return LocalDateTime.now().format(FORMATTER);
+
+    }
+
 
     @AfterAll
     public static void tearDown() {

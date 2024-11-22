@@ -2,7 +2,7 @@
   "variables": {
     "firstname": "Pezhvak",
     "lastname": "Varseh",
-    "BookingBaseUrl": "https://restful-booker.herokuapp.com",
+    "BaseUrl": "https://restful-booker.herokuapp.com",
     "username": "admin",
     "password": "password123"
   },

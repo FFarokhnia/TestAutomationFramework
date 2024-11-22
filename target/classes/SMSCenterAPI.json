@@ -1,0 +1,1694 @@
+{
+  "variables": {
+    "username": "admin",
+    "password": "password",
+    "BaseUrl": "https://46.21.158.74:18080"
+  },
+  "tests": [
+    {
+      "testCaseID" : "SMS-TC-1",
+      "method": "POST",
+      "description": "SignUp",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/SignUp",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "request_body": {
+          "username": "${username}",
+          "password": "${password}"
+        },
+        "expected_status": 201,
+        "expected_response_body": {
+          "id": "17ad8b2c-795f-41b8-9167-34ad39eab3b3",
+          "ownerId": "d642b558-bb0f-4afd-acb5-f768291c1921",
+          "resellerId": "ElseResellerId",
+          "carrierId": "d642b558-bb0f-4afd-acb5-f768291c1921",
+          "accountId": null,
+          "ipstategy": null,
+          "userType": "Userent",
+          "userKind": "Owner",
+          "provider": "Local",
+          "roleIds": [
+            "USERENT_Rolestore"
+          ],
+          "lastUpdatedBy": null,
+          "dateUpdated": "2024-11-22 14:56:07",
+          "dateAdded": "2024-11-22 14:56:07",
+          "friendlyName": null,
+          "active": null,
+          "iplIsTs": null,
+          "birthday": null,
+          "providerId": null,
+          "imageurl": null,
+          "avatar": null,
+          "email": null,
+          "expireDate": null,
+          "firstName": null,
+          "lang": "en",
+          "lastName": null,
+          "middleName": null,
+          "mobilePhone": null,
+          "msn": null,
+          "name": null,
+          "companyName": null,
+          "brandName": null,
+          "officePhone": null,
+          "otHeRims": null,
+          "phone": null,
+          "position": null,
+          "sendalArm": null,
+          "sendInvoice": null,
+          "sendRateChange": null,
+          "skyPe": null,
+          "timeOffset": null,
+          "zipCode": null,
+          "userName": null,
+          "address": null,
+          "emailVerified": false,
+          "phoneVerified": null,
+          "passwordHash": "bf400c2a1cbc2c5536aec42018864edb5738ed69bf5488a017a1aead21f888ae05a13c2f30de004a4a6fa4eedeb8c8d62f79712a4f8489e7eca408e57b36c250"
+        }
+      }
+
+    },
+    {
+      "testCaseID" : "SMS-TC-2",
+      "method": "POST",
+      "description": "Login",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/authenticate",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "request_body": {
+          "username": "${username}",
+          "password": "${password}"
+        },
+        "expected_status": 200,
+        "save_response": "token"
+      }
+    },
+    {
+      "testCaseID" : "SMS-TC-3",
+      "method": "GET",
+      "description": "Me",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/Userent/me",
+        "headers": {
+          "Authorization": "Bearer {{token}}"
+        },
+        "expected_status": 200,
+        "expected_response_body": {
+          "id": "admin",
+          "ownerId": null,
+          "resellerId": null,
+          "carrierId": "CARRIER_ONE",
+          "accountId": null,
+          "ipstategy": null,
+          "userType": "Admin",
+          "userKind": null,
+          "provider": null,
+          "roleIds": [
+            "ADMIN_Rolestore"
+          ],
+          "lastUpdatedBy": null,
+          "dateUpdated": null,
+          "dateAdded": null,
+          "friendlyName": "admin@demo.com",
+          "active": null,
+          "iplIsTs": null,
+          "birthday": null,
+          "providerId": null,
+          "imageurl": null,
+          "avatar": null,
+          "email": null,
+          "expireDate": null,
+          "firstName": null,
+          "lang": null,
+          "lastName": null,
+          "middleName": null,
+          "mobilePhone": null,
+          "msn": null,
+          "name": null,
+          "companyName": null,
+          "brandName": null,
+          "officePhone": null,
+          "otHeRims": null,
+          "phone": null,
+          "position": null,
+          "sendalArm": null,
+          "sendInvoice": null,
+          "sendRateChange": null,
+          "skyPe": null,
+          "timeOffset": null,
+          "zipCode": null,
+          "userName": "admin@demo.com",
+          "address": null,
+          "emailVerified": null,
+          "phoneVerified": null,
+          "passwordHash": "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86"
+        }
+      }
+    },
+    {
+      "testCaseID" : "SMS-TC-4",
+      "method": "GET",
+      "description": "MenuModel",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/MenuModel",
+        "headers": {
+          "Authorization": "Bearer {{token}}"
+        },
+        "queryParams": {
+          "paginate": false
+        },
+
+        "expected_status": 200
+
+      }
+    },
+    {
+      "testCaseID" : "SMS-TC-5",
+      "method": "POST",
+      "description": "Send SMS",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/SmsReq",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {{token}}"
+        },
+        "request_body": {
+          "destAddress" : "989122332980",
+          "encrypted" : false,
+          "ownerId" : "User_Carrier_one",
+          "productId" : "PRODUCT_ONE",
+          "shortMessage" : "message1",
+          "campaignId" : "1",
+          "smsPoiId" : "POI_ONE",
+          "sourceAddr" : "989981600902"
+        },
+
+        "expected_status": 201,
+        "expected_response_body": {
+          "id": "",
+          "ownerId": "User_Carrier_one",
+          "campaignId": "1",
+          "shortMessage": "message1",
+          "sourceAddr": "989981600902",
+          "destAddress": "989122332980",
+          "groupId": "",
+          "contactId": "",
+          "messageTemplateId": "",
+          "productId": "PRODUCT_ONE",
+          "smsPoiId": "POI_ONE",
+          "encrypted": false,
+          "resellerId": "",
+          "lastUpdatedBy": "",
+          "dateUpdated": "{{date_UTC}}",
+          "dateAdded": "{{date_UTC}}",
+          "friendlyName": ""
+        }
+
+      }
+    },
+    {
+      "testCaseID" : "SMS-TC-6",
+      "method": "GET",
+      "description": "Get Accounts",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/Accountent",
+        "headers":{
+          "Authorization": "Bearer {{token}}"
+        },
+        "expected_status": 200,
+        "expected_response_body":[
+          {
+            "accSendBalanceAlerts": null,
+            "accountName": null,
+            "clientCredit": 0,
+            "description": "",
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              21,
+              13,
+              27,
+              28,
+              298000000
+            ],
+            "accountManager": null,
+            "currency": null,
+            "id": "7a711e9f-82cc-42b5-89eb-caa55adf324f",
+            "friendlyName": "Dash4",
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": null,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              21,
+              13,
+              27,
+              28,
+              298000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": null
+          },
+          {
+            "accSendBalanceAlerts": false,
+            "accountName": null,
+            "clientCredit": 0,
+            "description": "",
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              12,
+              16,
+              0,
+              29,
+              731000000
+            ],
+            "accountManager": "admin4",
+            "currency": "EURO",
+            "id": "b4eb3f64-bf51-4f63-b5a2-f55a39e95ff5",
+            "friendlyName": "2023-06-14T12:30:56.986090",
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": false,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              12,
+              16,
+              0,
+              29,
+              731000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": "3c05dbd4-ed46-4432-bd1b-f20c421e8f67"
+          },
+          {
+            "accSendBalanceAlerts": false,
+            "accountName": null,
+            "clientCredit": 0,
+            "description": null,
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              6,
+              20,
+              35,
+              9
+            ],
+            "accountManager": null,
+            "currency": null,
+            "id": "fe655d05-4776-4338-92ae-6a4372ede470",
+            "friendlyName": "zcxzcsad2",
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": false,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              6,
+              20,
+              35,
+              9
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": null
+          },
+          {
+            "accSendBalanceAlerts": false,
+            "accountName": null,
+            "clientCredit": 0,
+            "description": null,
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              6,
+              20,
+              34,
+              45,
+              596000000
+            ],
+            "accountManager": null,
+            "currency": null,
+            "id": "c9f24b29-f39a-47c2-a247-2000541a575b",
+            "friendlyName": "Tesy",
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": false,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              6,
+              20,
+              34,
+              45,
+              596000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": null
+          },
+          {
+            "accSendBalanceAlerts": false,
+            "accountName": null,
+            "clientCredit": 0,
+            "description": null,
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              6,
+              20,
+              33,
+              17,
+              896000000
+            ],
+            "accountManager": null,
+            "currency": null,
+            "id": "cf3693bc-5279-4380-8366-845438608f4f",
+            "friendlyName": "",
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": false,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              6,
+              20,
+              33,
+              17,
+              896000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": null
+          },
+          {
+            "accSendBalanceAlerts": false,
+            "accountName": null,
+            "clientCredit": 0,
+            "description": null,
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              6,
+              20,
+              31,
+              47,
+              823000000
+            ],
+            "accountManager": null,
+            "currency": null,
+            "id": "08f814d5-6707-459d-b7d5-f98701b9a811",
+            "friendlyName": "asdads",
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": false,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              6,
+              20,
+              31,
+              47,
+              823000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": null
+          },
+          {
+            "accSendBalanceAlerts": false,
+            "accountName": null,
+            "clientCredit": 0,
+            "description": null,
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              6,
+              20,
+              29,
+              52,
+              377000000
+            ],
+            "accountManager": null,
+            "currency": null,
+            "id": "018eb753-161d-4203-822f-5d0f6e0a02ea",
+            "friendlyName": "erzcxc",
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": false,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              6,
+              20,
+              29,
+              52,
+              377000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": null
+          },
+          {
+            "accSendBalanceAlerts": false,
+            "accountName": "ad",
+            "clientCredit": 0,
+            "description": "asd",
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              4,
+              21,
+              54,
+              2,
+              21000000
+            ],
+            "accountManager": "ad",
+            "currency": "asd",
+            "id": "5f6fbce2-fac8-46ca-8f54-3731eae42aaf",
+            "friendlyName": "asd",
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": false,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              4,
+              21,
+              54,
+              2,
+              21000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": "asdads"
+          },
+          {
+            "accSendBalanceAlerts": true,
+            "accountName": "zxc",
+            "clientCredit": 0,
+            "description": "zxc",
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              4,
+              21,
+              48,
+              27,
+              52000000
+            ],
+            "accountManager": "ss",
+            "currency": "zcz",
+            "id": "12dcd943-ba59-4240-b8f0-239832212b5a",
+            "friendlyName": "zxcc",
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": true,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              4,
+              21,
+              48,
+              27,
+              52000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": "zxc"
+          },
+          {
+            "accSendBalanceAlerts": true,
+            "accountName": "ad",
+            "clientCredit": 0,
+            "description": "ad",
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              4,
+              21,
+              40,
+              34,
+              269000000
+            ],
+            "accountManager": "ad",
+            "currency": "asd",
+            "id": "44d29712-8a30-4257-a0f6-e763bc06ae0e",
+            "friendlyName": "ad",
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": false,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              4,
+              21,
+              40,
+              34,
+              269000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": "asd"
+          },
+          {
+            "accSendBalanceAlerts": true,
+            "accountName": "ada",
+            "clientCredit": 0,
+            "description": "ad",
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              4,
+              21,
+              39,
+              11,
+              61000000
+            ],
+            "accountManager": "asd",
+            "currency": "asd",
+            "id": "c1e3b53d-ed45-47e9-b6fc-678b5bd3a9a8",
+            "friendlyName": "asd",
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": true,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              4,
+              21,
+              39,
+              11,
+              61000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": "asdasd"
+          },
+          {
+            "accSendBalanceAlerts": true,
+            "accountName": "adada",
+            "clientCredit": 0,
+            "description": "ad",
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              4,
+              21,
+              29,
+              56,
+              222000000
+            ],
+            "accountManager": "asdasd",
+            "currency": "asdads",
+            "id": "ac25f51f-6f38-4164-8435-74cacef90b56",
+            "friendlyName": "asdsa",
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": true,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              4,
+              21,
+              29,
+              56,
+              222000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": "sdsdf"
+          },
+          {
+            "accSendBalanceAlerts": true,
+            "accountName": "tewts",
+            "clientCredit": 0,
+            "description": "dasda",
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              4,
+              21,
+              25,
+              15,
+              75000000
+            ],
+            "accountManager": "asdasd",
+            "currency": "asdasd",
+            "id": "a2be92ee-348f-45fd-8ba9-c4c7654ce39a",
+            "friendlyName": "adasd",
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": false,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              4,
+              21,
+              25,
+              15,
+              75000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": "asdasdas"
+          },
+          {
+            "accSendBalanceAlerts": false,
+            "accountName": null,
+            "clientCredit": 0,
+            "description": null,
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              4,
+              21,
+              4,
+              40,
+              530000000
+            ],
+            "accountManager": null,
+            "currency": null,
+            "id": "1130458f-c2b5-454d-b61b-810a06d49ed8",
+            "friendlyName": null,
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": true,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              4,
+              21,
+              4,
+              40,
+              530000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": null
+          },
+          {
+            "accSendBalanceAlerts": false,
+            "accountName": null,
+            "clientCredit": 0,
+            "description": null,
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              4,
+              20,
+              55,
+              52,
+              854000000
+            ],
+            "accountManager": null,
+            "currency": null,
+            "id": "4b7a7f0f-afda-4015-81cc-6d22734a0ed2",
+            "friendlyName": null,
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": false,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              4,
+              20,
+              55,
+              52,
+              854000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": null
+          },
+          {
+            "accSendBalanceAlerts": false,
+            "accountName": null,
+            "clientCredit": 0,
+            "description": null,
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              10,
+              19,
+              16,
+              13,
+              33,
+              751000000
+            ],
+            "accountManager": null,
+            "currency": null,
+            "id": "6f93bef8-27ba-4cf2-a3d3-575ad6233a8d",
+            "friendlyName": null,
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": false,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              10,
+              19,
+              16,
+              13,
+              33,
+              751000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": null
+          },
+          {
+            "accSendBalanceAlerts": false,
+            "accountName": null,
+            "clientCredit": 0,
+            "description": null,
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              10,
+              18,
+              23,
+              9,
+              55,
+              907000000
+            ],
+            "accountManager": null,
+            "currency": null,
+            "id": "4c0ab2b8-2910-47da-bfb4-c039ad650a55",
+            "friendlyName": null,
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": false,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              10,
+              18,
+              23,
+              9,
+              55,
+              907000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": null
+          }
+        ]
+
+      }
+    },
+    {
+      "testCaseID" : "SMS-TC-7",
+      "method": "GET",
+      "description": "Get Data Grid",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/Accountent/getdatagrid",
+        "headers":{
+          "Accept-Language": "ar",
+          "Authorization": "Bearer {{token}}"
+        },
+        "expected_status": 200,
+        "expected_response_body":{
+          "DataGrid": {
+            "settings": {
+              "pagination": {
+                "pageSize": 20,
+                "enabled": true
+              },
+              "allowFilter": true,
+              "allowSort": true
+            },
+            "columns": [
+              {
+                "sequence": 1,
+                "ColumnType": "Boolean",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.ACCOUNTSENDBALANCEALERTS**",
+                "isKey": false,
+                "alias": "accSendBalanceAlerts",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": false
+              },
+              {
+                "sequence": 2,
+                "ColumnType": "String",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "اسم",
+                "isKey": false,
+                "alias": "accountName",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": false
+              },
+              {
+                "sequence": 3,
+                "ColumnType": "Integer",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.CLIENTCREDIT**",
+                "isKey": false,
+                "alias": "clientCredit",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": false
+              },
+              {
+                "sequence": 4,
+                "ColumnType": "String",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.DESCRIPTION**",
+                "isKey": false,
+                "alias": "description",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": false
+              },
+              {
+                "sequence": 5,
+                "ColumnType": "String",
+                "expression": "Configuration.DynamicRows.Userent",
+                "referenceExpression": "Userent data",
+                "displayName": "مالك بطاقة تعريف",
+                "isKey": false,
+                "alias": "ownerId",
+                "dynamicColumnId": "Userent.id",
+                "required": false,
+                "isHidden": true
+              },
+              {
+                "sequence": 6,
+                "ColumnType": "LocalDateTime",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "تاريخ تمت الإضافة",
+                "isKey": false,
+                "alias": "dateAdded",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": true
+              },
+              {
+                "sequence": 7,
+                "ColumnType": "String",
+                "expression": "Configuration.DynamicRows.Userent",
+                "referenceExpression": "Userent data",
+                "displayName": "MENUMODEL.ACCOUNTMANAGER**",
+                "isKey": false,
+                "alias": "accountManager",
+                "dynamicColumnId": "Userent.id",
+                "required": false,
+                "isHidden": false
+              },
+              {
+                "sequence": 8,
+                "ColumnType": "String",
+                "expression": "Configuration.DynamicRows.CurrencyUnit",
+                "referenceExpression": "CurrencyUnit data",
+                "displayName": "MENUMODEL.CURRENCY**",
+                "isKey": false,
+                "alias": "currency",
+                "dynamicColumnId": "CurrencyUnit.id",
+                "required": true,
+                "isHidden": false
+              },
+              {
+                "sequence": 9,
+                "ColumnType": "String",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "بطاقة تعريف",
+                "isKey": true,
+                "alias": "id_",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": false
+              },
+              {
+                "sequence": 10,
+                "ColumnType": "String",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "ودي اسم",
+                "isKey": false,
+                "alias": "friendlyName",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": false
+              },
+              {
+                "sequence": 11,
+                "ColumnType": "Integer",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.ACCOUNTBALANCETHRESHOLD#1**",
+                "isKey": false,
+                "alias": "accbalthreshold1",
+                "dynamicColumnId": null,
+                "required": true,
+                "isHidden": false
+              },
+              {
+                "sequence": 12,
+                "ColumnType": "Integer",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.ACOCUNTCREDITTHRESHOLD#3**",
+                "isKey": false,
+                "alias": "acccrthreshold3",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": false
+              },
+              {
+                "sequence": 13,
+                "ColumnType": "String",
+                "expression": "Configuration.DynamicRows.Userent",
+                "referenceExpression": "Userent data",
+                "displayName": "آخر محدث بواسطة",
+                "isKey": false,
+                "alias": "lastUpdatedBy",
+                "dynamicColumnId": "Userent.id",
+                "required": false,
+                "isHidden": true
+              },
+              {
+                "sequence": 14,
+                "ColumnType": "Integer",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.ACCOUNTBALANCETHRESHOLD#2**",
+                "isKey": false,
+                "alias": "accbalthreshold2",
+                "dynamicColumnId": null,
+                "required": true,
+                "isHidden": false
+              },
+              {
+                "sequence": 15,
+                "ColumnType": "Integer",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.ACOCUNTCREDITTHRESHOLD#4**",
+                "isKey": false,
+                "alias": "acccrthreshold4",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": false
+              },
+              {
+                "sequence": 16,
+                "ColumnType": "Integer",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.ACOCUNTCREDITTHRESHOLD#5**",
+                "isKey": false,
+                "alias": "acccrthreshold5",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": false
+              },
+              {
+                "sequence": 17,
+                "ColumnType": "Integer",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.ACCOUNTBALANCETHRESHOLD#5**",
+                "isKey": false,
+                "alias": "accbalthreshold5",
+                "dynamicColumnId": null,
+                "required": true,
+                "isHidden": false
+              },
+              {
+                "sequence": 18,
+                "ColumnType": "Integer",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.ACCOUNTBALANCETHRESHOLD#3**",
+                "isKey": false,
+                "alias": "accbalthreshold3",
+                "dynamicColumnId": null,
+                "required": true,
+                "isHidden": false
+              },
+              {
+                "sequence": 19,
+                "ColumnType": "Integer",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.ACCOUNTBALANCETHRESHOLD#4**",
+                "isKey": false,
+                "alias": "accbalthreshold4",
+                "dynamicColumnId": null,
+                "required": true,
+                "isHidden": false
+              },
+              {
+                "sequence": 20,
+                "ColumnType": "Boolean",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.ISPRE-PAID**",
+                "isKey": false,
+                "alias": "prepaid",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": false
+              },
+              {
+                "sequence": 21,
+                "ColumnType": "Integer",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.ACOCUNTCREDITTHRESHOLD#1**",
+                "isKey": false,
+                "alias": "acccrthreshold1",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": false
+              },
+              {
+                "sequence": 22,
+                "ColumnType": "LocalDateTime",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "تاريخ محدث",
+                "isKey": false,
+                "alias": "dateUpdated",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": true
+              },
+              {
+                "sequence": 23,
+                "ColumnType": "Integer",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.ACOCUNTCREDITTHRESHOLD#2**",
+                "isKey": false,
+                "alias": "acccrthreshold2",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": false
+              },
+              {
+                "sequence": 24,
+                "ColumnType": "String",
+                "expression": "Configuration.DynamicRows.Userent",
+                "referenceExpression": "Userent data",
+                "displayName": "معرف الموزع",
+                "isKey": false,
+                "alias": "resellerId",
+                "dynamicColumnId": "Userent.id",
+                "required": false,
+                "isHidden": true
+              },
+              {
+                "sequence": 25,
+                "ColumnType": "Integer",
+                "expression": null,
+                "referenceExpression": null,
+                "displayName": "MENUMODEL.VENDORCREDIT**",
+                "isKey": false,
+                "alias": "vendorCredit",
+                "dynamicColumnId": null,
+                "required": false,
+                "isHidden": false
+              },
+              {
+                "sequence": 26,
+                "ColumnType": "String",
+                "expression": "Configuration.DynamicRows.Carrier",
+                "referenceExpression": "Carrier data",
+                "displayName": "MENUMODEL.CARRIER**",
+                "isKey": false,
+                "alias": "carrierId",
+                "dynamicColumnId": "Carrier.id",
+                "required": true,
+                "isHidden": false
+              }
+            ],
+            "name": "Accountent Data Grid",
+            "description": "A grid showing all accountent data",
+            "id": "dg1"
+          }
+        }
+
+      }
+    },
+    {
+      "testCaseID" : "SMS-TC-8",
+      "method": "GET",
+      "description": "Get Data Actions",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/Accountent/getactions",
+        "headers":{
+          "Authorization": "Bearer {{token}}"
+        },
+        "expected_status": 200,
+        "expected_response_body":[
+          {
+            "ActionTypeId": 1,
+            "ActionCode": "Add",
+            "Title": "Add"
+          },
+          {
+            "ActionTypeId": 1,
+            "ActionCode": "Delelet",
+            "Title": "Delete"
+          },
+          {
+            "ActionTypeId": 1,
+            "ActionCode": "Edit",
+            "Title": "Edit"
+          }
+        ]
+
+      }
+    },
+    {
+      "testCaseID" : "SMS-TC-9",
+      "method": "GET",
+      "description": "Search",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/Accountent",
+        "headers": {
+          "Authorization": "Bearer {{token}}"
+        },
+        "queryParams": {
+          "orderBy": "",
+          "direction": "",
+          "page": 0,
+          "size":1000,
+          "paginate": false,
+          "search": "ownerId:admin",
+          "fields": "ownerId,id"
+        },
+        "expected_status": 200,
+        "expected_response_body":[
+          {
+            "id": "7a711e9f-82cc-42b5-89eb-caa55adf324f",
+            "ownerId": "admin"
+          },
+          {
+            "id": "b4eb3f64-bf51-4f63-b5a2-f55a39e95ff5",
+            "ownerId": "admin"
+          },
+          {
+            "id": "fe655d05-4776-4338-92ae-6a4372ede470",
+            "ownerId": "admin"
+          },
+          {
+            "id": "c9f24b29-f39a-47c2-a247-2000541a575b",
+            "ownerId": "admin"
+          },
+          {
+            "id": "cf3693bc-5279-4380-8366-845438608f4f",
+            "ownerId": "admin"
+          },
+          {
+            "id": "08f814d5-6707-459d-b7d5-f98701b9a811",
+            "ownerId": "admin"
+          },
+          {
+            "id": "018eb753-161d-4203-822f-5d0f6e0a02ea",
+            "ownerId": "admin"
+          },
+          {
+            "id": "5f6fbce2-fac8-46ca-8f54-3731eae42aaf",
+            "ownerId": "admin"
+          },
+          {
+            "id": "12dcd943-ba59-4240-b8f0-239832212b5a",
+            "ownerId": "admin"
+          },
+          {
+            "id": "44d29712-8a30-4257-a0f6-e763bc06ae0e",
+            "ownerId": "admin"
+          },
+          {
+            "id": "c1e3b53d-ed45-47e9-b6fc-678b5bd3a9a8",
+            "ownerId": "admin"
+          },
+          {
+            "id": "ac25f51f-6f38-4164-8435-74cacef90b56",
+            "ownerId": "admin"
+          },
+          {
+            "id": "a2be92ee-348f-45fd-8ba9-c4c7654ce39a",
+            "ownerId": "admin"
+          },
+          {
+            "id": "1130458f-c2b5-454d-b61b-810a06d49ed8",
+            "ownerId": "admin"
+          },
+          {
+            "id": "4b7a7f0f-afda-4015-81cc-6d22734a0ed2",
+            "ownerId": "admin"
+          },
+          {
+            "id": "6f93bef8-27ba-4cf2-a3d3-575ad6233a8d",
+            "ownerId": "admin"
+          },
+          {
+            "id": "4c0ab2b8-2910-47da-bfb4-c039ad650a55",
+            "ownerId": "admin"
+          }
+        ]
+
+      }
+    },
+    {
+      "testCaseID" : "SMS-TC-10",
+      "method": "POST",
+      "description": "Search by fields in request body",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/ShortCode/search",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {{token}}"
+        },
+        "request_body": {
+          "skip": 0,
+          "take": 10,
+          "requiresCounts": true,
+          "sorted": [
+            {
+              "name": "id",
+              "direction": "DESC"
+            }
+          ],
+          "search": [
+            {
+              "fields": [
+                "next",
+                "endDate",
+                "description",
+                "mccField",
+                "dynamicChoices",
+                "ownerId",
+                "clientProductsInvolvement",
+                "dateAdded",
+                "choiceType",
+                "contentPattern",
+                "activeAt",
+                "staticChoices",
+                "sourceTags",
+                "dcs",
+                "ruleType",
+                "id_",
+                "dnipattern",
+                "friendlyName",
+                "lastUpdatedBy",
+                "vendorProducts",
+                "comments",
+                "clientProductTypes",
+                "vendorProductTypes",
+                "useFor",
+                "active",
+                "priority",
+                "smsContext",
+                "dateUpdated",
+                "resellerId",
+                "mncField",
+                "clientProducts",
+                "destinationTags",
+                "nextContext",
+                "vendorProductsInvolvement",
+                "aniPattern",
+                "startDate"
+              ],
+              "operator": "contains",
+              "key": "3333",
+              "ignoreCase": true
+            }
+          ],
+          "where": [
+
+          ],
+          "aggregates": [
+
+          ],
+          "onDemandGroupInfo": {
+            "level": 0,
+            "skip": 0,
+            "take": 0,
+            "where": [
+
+            ]
+          },
+          "isLazyLoad": true,
+          "activityId": 0,
+          "bindingTypeId": 0,
+          "projectId": 0
+        },
+
+        "expected_status": 200,
+        "expected_response_body": {
+          "result": [
+            {
+              "_id": "601916cd-1615-4dc2-92ed-bf9511aa8e30",
+              "carrier": "CARRIER_ONE",
+              "geoMatch": true,
+              "approved": true,
+              "number": "+989123333333",
+              "enabled": true,
+              "ownerId": "admin",
+              "resellerId": "admin",
+              "lastUpdatedBy": "admin",
+              "dateUpdated": 1731427232886,
+              "dateAdded": 1731427232886,
+              "friendlyName": "989123333333",
+              "_class": "xyz.calligo.Metronic.models.generated.ShortCode"
+            }
+          ],
+          "count": 1,
+          "errorMessage": null
+        }
+
+      }
+    },
+    {
+      "testCaseID" : "SMS-TC-11",
+      "method": "POST",
+      "description": "Import array",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/Accountent/array",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {{token}}"
+        },
+        "request_body": [
+          {
+            "accSendBalanceAlerts": null,
+            "accountName": null,
+            "clientCredit": 0,
+            "description": "",
+            "ownerId": "admin",
+            "dateAdded": [
+              2024,
+              11,
+              21,
+              13,
+              27,
+              28,
+              298000000
+            ],
+            "accountManager": null,
+            "currency": null,
+            "id": "7a711e9f-82cc-42b5-89eb-caa55adf324f",
+            "friendlyName": "Dash4",
+            "accbalthreshold1": 0,
+            "acccrthreshold3": 0,
+            "lastUpdatedBy": "admin",
+            "accbalthreshold2": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accbalthreshold5": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "prepaid": null,
+            "acccrthreshold1": 0,
+            "dateUpdated": [
+              2024,
+              11,
+              21,
+              13,
+              27,
+              28,
+              298000000
+            ],
+            "acccrthreshold2": 0,
+            "resellerId": "admin",
+            "vendorCredit": 0,
+            "carrierId": null
+          }
+
+        ],
+
+        "expected_status": 200,
+        "expected_response_body": [
+          {
+            "id": "7a711e9f-82cc-42b5-89eb-caa55adf324f",
+            "ownerId": "admin",
+            "lastUpdatedBy": "admin",
+            "dateUpdated": "2024-11-21 13:27:28",
+            "dateAdded": "2024-11-21 13:27:28",
+            "resellerId": "admin",
+            "carrierId": null,
+            "accountManager": null,
+            "currency": null,
+            "friendlyName": "Dash4",
+            "accountName": null,
+            "accbalthreshold1": 0,
+            "accbalthreshold2": 0,
+            "accbalthreshold3": 0,
+            "accbalthreshold4": 0,
+            "accbalthreshold5": 0,
+            "acccrthreshold1": 0,
+            "acccrthreshold2": 0,
+            "acccrthreshold3": 0,
+            "acccrthreshold4": 0,
+            "acccrthreshold5": 0,
+            "accSendBalanceAlerts": null,
+            "clientCredit": 0,
+            "vendorCredit": 0,
+            "description": "",
+            "prepaid": null
+          }
+        ]
+
+      }
+    },
+    {
+      "testCaseID" : "SMS-TC-12",
+      "method": "PATCH",
+      "description": "Update Account",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/Accountent/admin2",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {{token}}"
+        },
+        "request_body": {
+
+          "position": "CEO"
+
+        },
+
+        "expected_status": 200
+
+      }
+    },
+    {
+      "testCaseID" : "SMS-TC-13",
+      "method": "DELETE",
+      "description": "Delete Multi Accounts",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/Dashboard/ids",
+        "headers": {
+          "Authorization": "Bearer {{token}}"
+        },
+        "queryParams": {
+         "ids": "e0c66f19-afce-4e29-bc41-dcfcbb114e61"
+        },
+
+        "expected_status": 204
+
+      }
+    }
+  ]
+}
