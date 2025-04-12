@@ -1,5 +1,6 @@
 package com.api.framework;
 
+import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
@@ -10,8 +11,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -23,7 +27,10 @@ import java.util.Map;
 import io.restassured.config.SSLConfig;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchema;
 
 
 import com.aventstack.extentreports.ExtentReports;
@@ -50,10 +57,13 @@ public class APITest {
         RestAssured.config = RestAssured.config()
                 .sslConfig(SSLConfig.sslConfig().relaxedHTTPSValidation());
     }
+    public class Constants {
+        public static final String SCHEMA_BASE_PATH = "src/main/resources/schemas/";
+    }
 
     @ParameterizedTest(name = "{index}: {1}")
     @MethodSource("data")
-    public void executeApiTest(String testCaseID, String method, String description, JsonNode params) {
+    public void executeApiTest(String testCaseID, String method, String description, JsonNode params) throws IOException {
         // Create a test in the report
         test = extent.createTest(testCaseID+"---"+description);
 
@@ -158,6 +168,41 @@ public class APITest {
             // Compare expected and actual response bodies
             compareJsonFields(expectedResponseBody, actualResponseBody, "");
         }
+        // Validate the JSON schema if provided in params
+        if (updatedParams.has("expected_json_schema")) {
+            String schemaFileName = updatedParams.get("expected_json_schema").asText();
+            String fullSchemaPath = Constants.SCHEMA_BASE_PATH + schemaFileName;
+
+//
+//            // Log the schema file path for debugging
+            System.out.println("Loading JSON schema from: " + fullSchemaPath);
+
+            try {
+                // Validate the response against the schema
+                response.then().body(matchesJsonSchema(new File(fullSchemaPath)));
+                test.pass("JSON Schema Validation Passed.");
+            } catch (AssertionError e) {
+                test.fail("JSON Schema Validation Failed: " + e.getMessage());
+                throw e;
+            }
+        }
+        // Validate response time
+        if (updatedParams.has("expected_response_time")) {
+            long expectedTimeMs = updatedParams.get("expected_response_time").asLong(); // time in milliseconds
+            long actualTimeMs = response.getTime(); // get actual response time in ms
+
+            test.info("Expected Response Time (ms): " + expectedTimeMs);
+            test.info("Actual Response Time (ms): " + actualTimeMs);
+
+            try {
+                assertTrue(actualTimeMs <= expectedTimeMs, "Response time exceeded: " + actualTimeMs + "ms > " + expectedTimeMs + "ms");
+                test.pass("Response Time Validation Passed: " + actualTimeMs + "ms <= " + expectedTimeMs + "ms");
+            } catch (AssertionError e) {
+                test.fail("Response Time Validation Failed: Actual time = " + actualTimeMs + "ms, Expected <= " + expectedTimeMs + "ms");
+                throw e; // Let JUnit handle the failed assertion
+            }
+        }
+
     }
 
 
@@ -287,7 +332,8 @@ public class APITest {
     // Method to load test data from JSON file
     public static Object[][] data() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode testCases = mapper.readTree(new File("src/main/resources/SMSCenterAPI.json"));
+//        JsonNode testCases = mapper.readTree(new File("src/main/resources/SMSCenterAPI.json"));
+        JsonNode testCases = mapper.readTree(new File("src/main/resources/bookingAPITest.json"));
 
         // Load static variables
         staticVariablesMap = mapper.convertValue(testCases.get("variables"), Map.class);

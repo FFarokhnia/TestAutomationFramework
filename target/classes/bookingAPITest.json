@@ -8,19 +8,21 @@
   },
   "tests": [
     {
+      "testCaseID" : "SMS-TC-1",
       "method": "GET",
       "description": "Get booking IDs",
       "params": {
-        "baseUrl": "${BookingBaseUrl}",
+        "baseUrl": "${BaseUrl}",
         "endpoint": "/booking",
         "expected_status": 200
       }
     },
     {
+      "testCaseID" : "SMS-TC-2",
       "method": "POST",
       "description": "Create Booking",
       "params": {
-        "baseUrl": "${BookingBaseUrl}",
+        "baseUrl": "${BaseUrl}",
         "endpoint": "/booking",
         "headers": {
           "Content-Type": "application/json"
@@ -50,14 +52,16 @@
             "additionalneeds": "super bowls"
           }
         },
+        "expected_json_schema": "creatingBookingSchema.json",
         "save_response": "bookingid"
       }
     },
     {
+      "testCaseID": "SMS-TC-3",
       "method": "GET",
       "description": "Get booking by ID",
       "params": {
-        "baseUrl": "${BookingBaseUrl}",
+        "baseUrl": "${BaseUrl}",
         "endpoint": "/booking/{{bookingid}}",
         "expected_status": 200,
         "expected_response_body": {
@@ -70,14 +74,16 @@
             "checkout": "2019-01-01"
           },
           "additionalneeds": "super bowls"
-        }
+        },
+        "expected_json_schema": "getBookingByID.json"
       }
     },
     {
+      "testCaseID" : "SMS-TC-4",
       "method": "POST",
       "description": "Token Generator",
       "params": {
-        "baseUrl": "${BookingBaseUrl}",
+        "baseUrl": "${BaseUrl}",
         "endpoint": "/auth",
         "headers": {
           "Content-Type": "application/json"
@@ -91,10 +97,11 @@
       }
     },
     {
+      "testCaseID" : "SMS-TC-5",
       "method": "PUT",
       "description": "Update booking ID",
       "params": {
-        "baseUrl": "${BookingBaseUrl}",
+        "baseUrl": "${BaseUrl}",
         "endpoint": "/booking/{{bookingid}}",
         "headers": {
           "Content-Type": "application/json",
@@ -124,13 +131,13 @@
           "additionalneeds": "Lunch"
         }
       }
-    }
-  ,
+    },
     {
+      "testCaseID" : "SMS-TC-6",
       "method": "PATCH",
       "description": "Partial Update Booking ID",
       "params": {
-        "baseUrl": "${BookingBaseUrl}",
+        "baseUrl": "${BaseUrl}",
         "endpoint": "/booking/{{bookingid}}",
         "headers": {
           "Content-Type": "application/json",
@@ -155,17 +162,44 @@
       }
     },
     {
+      "testCaseID" : "SMS-TC-7",
       "method": "DELETE",
       "description": "Delete Booking ID",
       "params": {
-        "baseUrl": "${BookingBaseUrl}",
+        "baseUrl": "${BaseUrl}",
         "endpoint": "/booking/{{bookingid}}",
         "headers": {
           "Cookie": "token={{token}}"
         },
         "expected_status": 201
       }
-    }
+    },
+    {
+      "testCaseID": "SMS-TC-8",
+      "method": "GET",
+      "description": "Get Booking details with invalid ID",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/booking/111222",
+        "expected_status": 404
+      }
+    },
+    {
+      "testCaseID" : "SMS-TC-9",
+      "method": "POST",
+      "description": "Create booking Invalid Body",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/booking",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "request_body": "{ \"firstname\": \"badGuy\", \"lastname\": \"badGuyFamily\", \"totalprice\": 45&&, \"depositpaid\": true, \"bookingdates\": { \"checkin\": \"2018-01-01\", \"checkout\": \"2019-01-01\" }, \"additionalneeds\": \"Breakfast\" }",
 
+        "expected_status": 400,
+        "expected_response_time": 200
+      }
+    }
   ]
 }
+

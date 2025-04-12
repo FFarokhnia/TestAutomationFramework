@@ -21,10 +21,10 @@
         },
         "expected_status": 201,
         "expected_response_body": {
-          "id": "17ad8b2c-795f-41b8-9167-34ad39eab3b3",
-          "ownerId": "d642b558-bb0f-4afd-acb5-f768291c1921",
+          "id": "ee940de8-085e-43fc-9fde-6c83344be632",
+          "ownerId": "5ca2a8cd-3cc8-48f5-bc48-14c1d56c7b55",
           "resellerId": "ElseResellerId",
-          "carrierId": "d642b558-bb0f-4afd-acb5-f768291c1921",
+          "carrierId": "5ca2a8cd-3cc8-48f5-bc48-14c1d56c7b55",
           "accountId": null,
           "ipstategy": null,
           "userType": "Userent",
@@ -34,8 +34,8 @@
             "USERENT_Rolestore"
           ],
           "lastUpdatedBy": null,
-          "dateUpdated": "2024-11-22 14:56:07",
-          "dateAdded": "2024-11-22 14:56:07",
+          "dateUpdated": "2024-12-01 18:27:25",
+          "dateAdded": "2024-12-01 18:27:25",
           "friendlyName": null,
           "active": null,
           "iplIsTs": null,
@@ -1687,6 +1687,57 @@
         },
 
         "expected_status": 204
+
+      }
+    },
+    {
+      "testCaseID" : "SMS-TC-13",
+      "method": "POST",
+      "description": "Update Accountent",
+      "params": {
+        "baseUrl": "${BaseUrl}",
+        "endpoint": "/Accountent/update",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {{token}}"
+        },
+        "request_body":
+    {
+      "added": [
+        {
+          "id": "12345",
+          "friendlyName": "Tab1"
+        },{
+          "id": "67890",
+          "friendlyName": "Tab2"
+        }
+      ],
+      "changed": [
+        {
+
+          "id": "12345",
+          "friendlyName": "Tab1"
+        },{
+          "id": "67890",
+          "friendlyName": "Tab2"
+        }
+      ],
+      "deleted": [
+        {
+          "id": "12345",
+          "friendlyName": "Tab1"
+        },{
+          "id": "67890",
+          "friendlyName": "Tab2"
+        }
+      ],
+
+      "action": "batch"
+
+        },
+
+        "expected_status": 200,
+        "expected_response_body":"Batch processing completed successfully."
 
       }
     }
